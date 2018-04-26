@@ -1,11 +1,12 @@
 <template>
-  <div class="singer">歌手</div>
+  <list-view :data="singers"></list-view>
 </template>
 
 <script>
 import {getSingerList} from 'api/singer'
 import {ERR_OK} from 'api/config'
 import Singer from 'common/js/singer'
+import ListView from 'components/list-view/list-view'
 
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10
@@ -24,8 +25,8 @@ export default {
     async _getSingerList () {
       let {code, data} = await getSingerList()
       if (code === ERR_OK) {
-        this.singers = data.list
-        console.log(this._normalizeSinger(this.singers))
+        this.singers = this._normalizeSinger(data.list)
+        // console.log(this._normalizeSinger(this.singers))
       }
     },
     _normalizeSinger (list) {
@@ -54,9 +55,24 @@ export default {
           name: item.Fsinger_name
         }))
       })
+      // 为了得到有序列表，我们需要处理 map
+      let hot = []
+      let ret = []
+      for (const key in map) {
+        let val = map[key]
+        if (val.title.match(/[a-zA-Z]/)) {
+          ret.push(val)
+        } else if (val.title === HOT_NAME) {
+          hot.push(val)
+        }
+      }
+      ret.sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0))
 
-      return map
+      return hot.concat(ret)
     }
+  },
+  components: {
+    ListView
   }
 }
 </script>

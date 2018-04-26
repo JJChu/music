@@ -58,7 +58,6 @@ export default {
       let {code, data} = await getDiscList()
       if (code === ERR_OK) {
         this.discList = data.list
-        console.log(data)
       }
     }
   },
