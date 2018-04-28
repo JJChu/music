@@ -23,7 +23,7 @@
         </ul>
       </div>
     </div>
-    <div class="loading-wrapper" v-show="!discList.length">
+    <div class="loading-wrapper vertical-middle" v-show="!discList.length">
       <loading></loading>
     </div>
   </scroll>
@@ -104,11 +104,5 @@ export default {
         .name
           margin-bottom 10px
           color $color-text-d
-
-  .loading-wrapper
-      position absolute
-      width 100%
-      top 50%
-      transform translateY(-50%)
 
 </style>
