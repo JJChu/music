@@ -32,7 +32,8 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 ## 借鉴
 
-- 常用的变量保存起来
+- 常用的变量/常量保存起来
 - 封装类
 - 业务代码和数据处理要分离开来
 - 不在视图中展示的数据不用在 data 中初始化
+- Math.max(a,b)

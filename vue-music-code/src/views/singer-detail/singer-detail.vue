@@ -41,7 +41,6 @@ export default {
       let {code, data} = await getSingerDetail(this.singer.id)
       if (code === ERR_OK) {
         this.songs = this._normalizeSongs(data.list)
-        console.log(this.songs)
       }
     },
     _normalizeSongs (list) {
