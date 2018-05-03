@@ -1,5 +1,6 @@
 <template>
   <div class="player" v-show="playList.length">
+    <!-- 展开的播放器 -->
     <div class="normal-player" v-show="fullScreen">
       <div class="background"><img width="100%" height="100%" src="" alt=""></div>
       <div class="top">
@@ -10,6 +11,7 @@
       <div class="middle"></div>
       <div class="bottom"></div>
     </div>
+    <!-- 底部收缩播放器 -->
     <div class="mini-player" v-show="!fullScreen"></div>
   </div>
 </template>
@@ -19,10 +21,13 @@ import {mapGetters} from 'vuex'
 
 export default {
   name: 'Player',
-  ...mapGetters([
-    'fullScreen',
-    'playList'
-  ])
+  computed: {
+    ...mapGetters([
+      'fullScreen',
+      'playList'
+    ])
+  }
+
 }
 </script>
 

@@ -1,8 +1,12 @@
 <template>
-  <list-view :data="singers"></list-view>
+  <div class="singer">
+    <list-view @select="selectSinger" :data="singers"></list-view>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>
+import {mapMutations} from 'vuex'
 import {getSingerList} from 'api/singer'
 import {ERR_OK} from 'api/config'
 import Singer from 'common/js/singer'
@@ -26,8 +30,11 @@ export default {
       let {code, data} = await getSingerList()
       if (code === ERR_OK) {
         this.singers = this._normalizeSinger(data.list)
-        // console.log(this._normalizeSinger(this.singers))
       }
+    },
+    selectSinger (singer) {
+      this.$router.push(`/singer/${singer.id}`)
+      this.setSinger(singer)
     },
     _normalizeSinger (list) {
       let map = {
@@ -69,7 +76,10 @@ export default {
       ret.sort((a, b) => a.title.charCodeAt(0) - b.title.charCodeAt(0))
 
       return hot.concat(ret)
-    }
+    },
+    ...mapMutations({
+      setSinger: 'SET_SINGER'
+    })
   },
   components: {
     ListView

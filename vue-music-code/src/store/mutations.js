@@ -20,3 +20,5 @@ const mutations = {
     state.currentIndex = index
   }
 }
+
+export default mutations
