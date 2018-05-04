@@ -1,7 +1,7 @@
 <template>
   <div class="music-list">
     <!-- Header -->
-    <div class="back">
+    <div class="back" @click="onBack">
       <i class="icon-back"></i>
     </div>
     <h1 class="title">{{title}}</h1>
@@ -19,7 +19,7 @@
     <!-- 音乐列表 -->
     <scroll class="list" :data="songs" :probe-type="probeType" :listen-scroll="listenScroll" @scroll="onScroll" ref="list">
       <div class="song-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list :songs="songs" @select="onSelectItem"></song-list>
       </div>
       <div class="loading-wrapper" v-show="!songs.length">
         <loading></loading>
@@ -75,6 +75,12 @@ export default {
   methods: {
     onScroll (pos) {
       this.scrollY = pos.y
+    },
+    onBack () {
+      this.$router.back()
+    },
+    onSelectItem (item, index) {
+
     }
   },
   watch: {
