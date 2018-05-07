@@ -5,8 +5,8 @@
       <div class="background"><img width="100%" height="100%" src="" alt=""></div>
       <div class="top">
         <div class="back"><i class="icon-back"></i></div>
-        <h1 class="title"></h1>
-        <h2 class="subtitle"></h2>
+        <h1 class="title" v-html="currentSong.name"></h1>
+        <h2 class="subtitle" v-html="currentSong.singer"></h2>
       </div>
       <div class="middle"></div>
       <div class="bottom"></div>
@@ -24,7 +24,8 @@ export default {
   computed: {
     ...mapGetters([
       'fullScreen',
-      'playList'
+      'playList',
+      'currentSong'
     ])
   }
 }
@@ -39,7 +40,7 @@ export default {
     bottom 0
     left 0
     right 0
-    background rgba(100,100,100,.5)
+    background $color-background
     .normal-player
       position fixed
       left 0

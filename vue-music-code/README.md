@@ -35,7 +35,7 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 - 常用的变量/常量保存起来
 - 封装类
 - 业务代码和数据处理要分离开来
-- 不在视图中展示的数据不用在 data 中初始化
+- 不需要追踪变化更新视图的数据我们可以在 created() 钩子函数里定义初始化；只在函数里使用的一些数据我们可以直接 this.x 定义
 - Math.max(a,b)
 - watch 的合理利用
 - state 中的放一些比较纯碎的状态，一些组合状态可以用 getter
