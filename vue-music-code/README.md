@@ -40,3 +40,4 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 - watch 的合理利用
 - state 中的放一些比较纯碎的状态，一些组合状态可以用 getter
 - action 不仅可以做异步处理，也可以封装一些多个 mutation
+- 对接口方法进行封装时要返回一个 Promise
