@@ -45,43 +45,46 @@
           </div>
           <div class="operators">
             <div class="icon i-left">
-              <i></i>
+              <i class="icon-sequence"></i>
             </div>
             <div class="icon i-left">
               <i class="icon-prev"></i>
             </div>
             <div class="icon i-center">
-              <i></i>
+              <i class="icon-play" @click="togglePlaying"></i>
             </div>
             <div class="icon i-right">
               <i class="icon-next"></i>
             </div>
             <div class="icon i-right">
-              <i></i>
+              <i class="icon icon-not-favorite"></i>
             </div>
           </div>
         </div>
       </div>
     </transition>
-
     <!-- 底部收缩播放器 -->
-    <div class="mini-player" v-show="!fullScreen" @click="open">
-      <div class="icon">
-          <img class="" width="40" height="40" :src="currentSong.image">
-        </div>
-        <div class="text">
-          <h2 class="name" v-html="currentSong.name"></h2>
-          <p class="desc" v-html="currentSong.singer"></p>
-        </div>
-        <div class="control">
-          <!-- <progress-circle :radius="radius" :percent="percent">
-            <i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
-          </progress-circle> -->
-        </div>
-        <div class="control" @click.stop="showPlaylist">
-          <i class="icon-playlist"></i>
-        </div>
-    </div>
+    <transition name="mini">
+      <div class="mini-player" v-show="!fullScreen" @click="open">
+        <div class="icon">
+            <img class="" width="40" height="40" :src="currentSong.image">
+          </div>
+          <div class="text">
+            <h2 class="name" v-html="currentSong.name"></h2>
+            <p class="desc" v-html="currentSong.singer"></p>
+          </div>
+          <div class="control">
+            <!-- <progress-circle :radius="radius" :percent="percent">
+              <i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
+            </progress-circle> -->
+          </div>
+          <div class="control" @click.stop="showPlaylist">
+            <i class="icon-playlist"></i>
+          </div>
+      </div>
+    </transition>
+    <audio ref="audio" :src="currentSong.url"></audio>
+
   </div>
 </template>
 
@@ -95,8 +98,16 @@ export default {
     ...mapGetters([
       'fullScreen',
       'playList',
-      'currentSong'
+      'currentSong',
+      'playing'
     ])
+  },
+  watch: {
+    currentSong () {
+      this.$nextTick(() => {
+        this.$refs.audio.play()
+      })
+    }
   },
   methods: {
     back () {
@@ -104,6 +115,9 @@ export default {
     },
     open () {
       this.setFullScreen(true)
+    },
+    togglePlaying () {
+
     },
     enter (el, done) {
       const {x, y, scale} = this._getPosAndScale()
@@ -162,7 +176,8 @@ export default {
       }
     },
     ...mapMutations({
-      setFullScreen: 'SET_FULL_SCREEN'
+      setFullScreen: 'SET_FULL_SCREEN',
+      setPlayingState: 'SET_PLAYING_STATE'
     })
   }
 }
