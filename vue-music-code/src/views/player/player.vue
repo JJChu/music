@@ -17,7 +17,7 @@
         <div class="middle">
           <div class="middle-l">
             <div class="cd-wrapper" ref="cdWrapper">
-              <div class="cd">
+              <div class="cd play" :class="{'pause': !playing}">
                 <img :src="currentSong.image" alt="" class="image">
               </div>
             </div>
@@ -39,21 +39,23 @@
             <span class="dot"></span>
           </div>
           <div class="progress-wrapper">
-            <span class="time time-l"></span>
-            <div class="progress-bar-wrapper"></div>
-            <span class="time time-l"></span>
+            <span class="time time-l">{{formatTime(currentTime)}}</span>
+            <div class="progress-bar-wrapper">
+              <progress-bar></progress-bar>
+            </div>
+            <span class="time time-r">{{formatTime(currentSong.duration)}}</span>
           </div>
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
             </div>
-            <div class="icon i-left">
+            <div class="icon i-left" :class="disabledCla">
               <i class="icon-prev" @click="prev"></i>
             </div>
-            <div class="icon i-center">
+            <div class="icon i-center" :class="disabledCla">
               <i :class="playIcon" @click="togglePlaying"></i>
             </div>
-            <div class="icon i-right">
+            <div class="icon i-right" :class="disabledCla">
               <i class="icon-next" @click="next"></i>
             </div>
             <div class="icon i-right">
@@ -83,7 +85,11 @@
           </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url" @canplay="ready"></audio>
+    <audio ref="audio"
+      :src="currentSong.url"
+      @canplay="ready"
+      @error="error"
+      @timeupdate="updataTime"></audio>
 
   </div>
 </template>
@@ -91,12 +97,14 @@
 <script>
 import {mapGetters, mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
+import ProgressBar from 'components/progress-bar/progress-bar.vue'
 
 export default {
   name: 'Player',
   data () {
     return {
-      songReady: false
+      songReady: false,
+      currentTime: ''
     }
   },
   computed: {
@@ -109,6 +117,9 @@ export default {
     ]),
     playIcon () {
       return this.playing ? 'icon-pause' : 'icon-play'
+    },
+    disabledCla () {
+      return this.songReady ? '' : 'disable'
     }
   },
   watch: {
@@ -123,6 +134,9 @@ export default {
         newPlaying ? audio.play() : audio.pause()
       })
     }
+  },
+  components: {
+    ProgressBar
   },
   methods: {
     back () {
@@ -149,9 +163,9 @@ export default {
       this.songReady = false
     },
     next () {
-      // if (!this.songReady) {
-      //   return
-      // }
+      if (!this.songReady) {
+        return
+      }
       let index = this.currentIndex + 1
       if (index === this.playList.length) {
         index = 0
@@ -160,13 +174,17 @@ export default {
       if (!this.playing) {
         this.togglePlaying()
       }
-      // this.songReady = false
+      this.songReady = false
     },
     ready () {
       this.songReady = true
     },
     error () {
-
+      this.songReady = true
+    },
+    updataTime (e) {
+      this.currentTime = e.target.currentTime
+      console.log(e)
     },
 
     enter (el, done) {
@@ -224,6 +242,20 @@ export default {
         y,
         scale
       }
+    },
+    _pad (num, n = 2) {
+      let len = num.toString().length
+      while (len < n) {
+        num = '0' + num
+        len++
+      }
+      return num
+    },
+    formatTime (interval) {
+      interval = interval | 0
+      const minute = this._pad(interval / 60 | 0)
+      const second = this._pad(interval % 60)
+      return `${minute}:${second}`
     },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
@@ -309,10 +341,11 @@ export default {
               box-sizing border-box
               border 10px solid rgba(255,255,255,.1)
               border-radius 50%
+              &.play
+                animation: rotate 20s linear infinite
+              &.pause
+                animation-play-state: paused
               .image
-                position absolute
-                left 0
-                top 0
                 width 100%
                 height 100%
                 border-radius 50%
