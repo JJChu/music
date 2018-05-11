@@ -48,13 +48,13 @@
               <i class="icon-sequence"></i>
             </div>
             <div class="icon i-left">
-              <i class="icon-prev"></i>
+              <i class="icon-prev" @click="prev"></i>
             </div>
             <div class="icon i-center">
-              <i class="icon-play" @click="togglePlaying"></i>
+              <i :class="playIcon" @click="togglePlaying"></i>
             </div>
             <div class="icon i-right">
-              <i class="icon-next"></i>
+              <i class="icon-next" @click="next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -83,7 +83,7 @@
           </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url"></audio>
+    <audio ref="audio" :src="currentSong.url" @canplay="ready"></audio>
 
   </div>
 </template>
@@ -94,18 +94,33 @@ import animations from 'create-keyframe-animation'
 
 export default {
   name: 'Player',
+  data () {
+    return {
+      songReady: false
+    }
+  },
   computed: {
     ...mapGetters([
       'fullScreen',
       'playList',
+      'currentIndex',
       'currentSong',
       'playing'
-    ])
+    ]),
+    playIcon () {
+      return this.playing ? 'icon-pause' : 'icon-play'
+    }
   },
   watch: {
     currentSong () {
       this.$nextTick(() => {
         this.$refs.audio.play()
+      })
+    },
+    playing (newPlaying) {
+      let audio = this.$refs.audio
+      this.$nextTick(_ => {
+        newPlaying ? audio.play() : audio.pause()
       })
     }
   },
@@ -117,8 +132,43 @@ export default {
       this.setFullScreen(true)
     },
     togglePlaying () {
+      this.setPlayingState(!this.playing)
+    },
+    prev () {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex - 1
+      if (index === -1) {
+        index = this.playList.length - 1
+      }
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+      this.songReady = false
+    },
+    next () {
+      // if (!this.songReady) {
+      //   return
+      // }
+      let index = this.currentIndex + 1
+      if (index === this.playList.length) {
+        index = 0
+      }
+      this.setCurrentIndex(index)
+      if (!this.playing) {
+        this.togglePlaying()
+      }
+      // this.songReady = false
+    },
+    ready () {
+      this.songReady = true
+    },
+    error () {
 
     },
+
     enter (el, done) {
       const {x, y, scale} = this._getPosAndScale()
       let animation = {
@@ -177,7 +227,8 @@ export default {
     },
     ...mapMutations({
       setFullScreen: 'SET_FULL_SCREEN',
-      setPlayingState: 'SET_PLAYING_STATE'
+      setPlayingState: 'SET_PLAYING_STATE',
+      setCurrentIndex: 'SET_CURRENT_INDEX'
     })
   }
 }
