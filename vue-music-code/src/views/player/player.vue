@@ -41,7 +41,7 @@
           <div class="progress-wrapper">
             <span class="time time-l">{{formatTime(currentTime)}}</span>
             <div class="progress-bar-wrapper">
-              <progress-bar></progress-bar>
+              <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
             </div>
             <span class="time time-r">{{formatTime(currentSong.duration)}}</span>
           </div>
@@ -120,6 +120,9 @@ export default {
     },
     disabledCla () {
       return this.songReady ? '' : 'disable'
+    },
+    percent () {
+      return this.currentTime / this.currentSong.duration
     }
   },
   watch: {
@@ -184,7 +187,12 @@ export default {
     },
     updataTime (e) {
       this.currentTime = e.target.currentTime
-      console.log(e)
+    },
+    onProgressBarChange (percent) {
+      this.$refs.audio.currentTime = this.currentSong.duration * percent
+      if (!this.playing) {
+        this.togglePlaying()
+      }
     },
 
     enter (el, done) {
@@ -253,7 +261,7 @@ export default {
     },
     formatTime (interval) {
       interval = interval | 0
-      const minute = this._pad(interval / 60 | 0)
+      const minute = interval / 60 | 0
       const second = this._pad(interval % 60)
       return `${minute}:${second}`
     },

@@ -41,3 +41,8 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 - state 中的放一些比较纯碎的状态，一些组合状态可以用 getter
 - action 不仅可以做异步处理，也可以封装一些多个 mutation
 - 对接口方法进行封装时要返回一个 Promise
+- vue 中 transtion 动画以及其钩子函数的使用
+- 移动端的事件（touch）以及事件对象
+- audio 所有特性，事件，事件对象，属性
+- dom pageX...
+- window.innerWidth...
