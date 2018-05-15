@@ -25,13 +25,17 @@
               <div class="playing-lyric"></div>
             </div>
           </div>
-          <div class="middle-r">
+          <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
             <div class="lyric-wrapper">
-              <div>
-                <p class="text"></p>
+              <div v-if="currentLyric">
+                <p
+                    class="text"
+                    :class="{'current': currentLineNum === index}"
+                    v-for="(line,index) in currentLyric.lines"
+                    :key="index">{{line.txt}}</p>
               </div>
             </div>
-          </div>
+          </scroll>
         </div>
         <div class="bottom">
           <div class="dot-wrapper">
@@ -91,17 +95,18 @@
       @error="error"
       @timeupdate="updataTime"
       @ended="end"></audio>
-
   </div>
 </template>
 
 <script>
 import {mapGetters, mapMutations} from 'vuex'
 import animations from 'create-keyframe-animation'
-import ProgressBar from 'components/progress-bar/progress-bar.vue'
+import ProgressBar from 'components/progress-bar/progress-bar'
 import ProgressCircle from 'components/progress-circle/progress-circle'
+import Scroll from 'components/scroll/scroll'
 import {playMode} from '../../common/js/config'
 import {shuffle} from '../../common/js/util'
+import Lyric from 'lyric-parser'
 
 export default {
   name: 'Player',
@@ -109,6 +114,8 @@ export default {
     return {
       songReady: false,
       currentTime: '',
+      currentLyric: null,
+      currentLineNum: 0,
       radius: 32
     }
   },
@@ -145,6 +152,7 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.audio.play()
+        this.getLyric()
       })
     },
     playing (newPlaying) {
@@ -156,7 +164,8 @@ export default {
   },
   components: {
     ProgressBar,
-    ProgressCircle
+    ProgressCircle,
+    Scroll
   },
   methods: {
     back () {
@@ -238,6 +247,21 @@ export default {
     resetCurrentIndex (list) {
       let index = list.findIndex(item => item.id === this.currentSong.id)
       this.setCurrentIndex(index)
+    },
+
+    async getLyric () {
+      let lyric = await this.currentSong.getLyric()
+      if (this.currentSong.lyric !== lyric) {
+        return
+      }
+      this.currentLyric = new Lyric(lyric, this.handleLyric)
+      if (this.playing) {
+        this.currentLyric.play()
+      }
+    },
+    handleLyric ({lineNum, txt}) {
+      console.log(lineNum)
+      this.currentLineNum = lineNum
     },
 
     enter (el, done) {
@@ -430,6 +454,8 @@ export default {
               line-height 32px
               color $color-text-l
               font-size $font-size-medium
+              &.current
+                color: $color-text
       .bottom
         position: absolute
         bottom: 50px
