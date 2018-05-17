@@ -1,6 +1,6 @@
 <template>
-  <div class="singer">
-    <list-view @select="selectSinger" :data="singers"></list-view>
+  <div class="singer" ref="singer">
+    <list-view @select="selectSinger" :data="singers" ref="list"></list-view>
     <router-view></router-view>
   </div>
 </template>
@@ -11,12 +11,14 @@ import {getSingerList} from 'api/singer'
 import {ERR_OK} from 'api/config'
 import Singer from 'common/js/singer'
 import ListView from 'components/list-view/list-view'
+import {playlistMixin} from 'common/js/mixin'
 
 const HOT_NAME = '热门'
 const HOT_SINGER_LEN = 10
 
 export default {
   name: 'Singer',
+  mixins: [playlistMixin],
   data () {
     return {
       singers: []
@@ -35,6 +37,11 @@ export default {
     selectSinger (singer) {
       this.$router.push(`/singer/${singer.id}`)
       this.setSinger(singer)
+    },
+    handlePlaylist (playList) {
+      const bottom = playList.length > 0 ? '60px' : ''
+      this.$refs.singer.style.bottom = bottom
+      this.$refs.list.refresh()
     },
     _normalizeSinger (list) {
       let map = {

@@ -1,32 +1,34 @@
 <template>
-  <scroll class="scroll-wrapper" :data="discList">
-    <div class="recommend">
-      <div class="slider-wrapper" v-if="sliders.length">
-        <slider>
-          <div v-for="(item,index) in sliders" :key="index">
-            <a :href="item.linkUrl"><img :src="item.picUrl"></a>
-          </div>
-        </slider>
-      </div>
-      <div class="disc" v-show="discList.length">
-        <h1 class="disc-title">热门歌单推荐</h1>
-        <ul>
-          <li class="desc-item" v-for="item in discList" :key="item.dissid">
-            <div class="icon">
-              <img width="60" height="60" v-lazy="item.imgurl" :alt="item.dissname">
+  <div class="recommend" ref="recommend">
+    <scroll class="scroll-wrapper" :data="discList" ref="scroll">
+      <div>
+        <div class="slider-wrapper" v-if="sliders.length">
+          <slider>
+            <div v-for="(item,index) in sliders" :key="index">
+              <a :href="item.linkUrl"><img :src="item.picUrl"></a>
             </div>
-            <div class="text">
-              <h2 class="name">{{item.creator.name}}</h2>
-              <p  class="desc">{{item.dissname}}</p>
-            </div>
-          </li>
-        </ul>
+          </slider>
+        </div>
+        <div class="disc" v-show="discList.length">
+          <h1 class="disc-title">热门歌单推荐</h1>
+          <ul>
+            <li class="desc-item" v-for="item in discList" :key="item.dissid">
+              <div class="icon">
+                <img width="60" height="60" v-lazy="item.imgurl" :alt="item.dissname">
+              </div>
+              <div class="text">
+                <h2 class="name">{{item.creator.name}}</h2>
+                <p  class="desc">{{item.dissname}}</p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-    </div>
-    <div class="loading-wrapper vertical-middle" v-show="!discList.length">
-      <loading></loading>
-    </div>
-  </scroll>
+      <div class="loading-wrapper vertical-middle" v-show="!discList.length">
+        <loading></loading>
+      </div>
+    </scroll>
+  </div>
 </template>
 
 <script>
@@ -35,8 +37,11 @@ import {ERR_OK} from 'api/config'
 import Slider from 'components/slider/slider'
 import Scroll from 'components/scroll/scroll'
 import Loading from 'components/loading/loading'
+import {playlistMixin} from 'common/js/mixin'
+
 export default {
   name: 'Recommend',
+  mixins: [playlistMixin],
   data () {
     return {
       sliders: [],
@@ -59,6 +64,11 @@ export default {
       if (code === ERR_OK) {
         this.discList = data.list
       }
+    },
+    handlePlaylist (playList) {
+      const bottom = playList.length > 0 ? '60px' : ''
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scroll.refresh()
     }
   },
   components: {
@@ -71,6 +81,12 @@ export default {
 
 <style lang="stylus">
   @import '~common/stylus/variable'
+
+  .recommend
+    position: fixed
+    top: 88px
+    bottom: 0
+    width: 100%
 
   .scroll-wrapper
     width 100%

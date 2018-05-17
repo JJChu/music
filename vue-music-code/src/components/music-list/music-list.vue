@@ -33,11 +33,13 @@ import Scroll from 'components/scroll/scroll'
 import Loading from 'components/loading/loading'
 import SongList from 'components/song-list/song-list'
 import {mapActions} from 'vuex'
+import {playlistMixin} from 'common/js/mixin'
 
 const RESERVED_HEIGHT = 40
 
 export default {
   name: 'MusicList',
+  mixins: [playlistMixin],
   props: {
     title: {
       type: String,
@@ -90,6 +92,11 @@ export default {
       this.randomPlay({
         list: this.songs
       })
+    },
+    handlePlaylist (playList) {
+      const bottom = playList.length > 0 ? '60px' : ''
+      this.$refs.list.$el.style.bottom = bottom
+      this.$refs.list.refresh()
     },
     ...mapActions([
       'selectPlay',
