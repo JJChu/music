@@ -49,3 +49,4 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 - svg 相关
 - [洗牌算法](https://www.zhihu.com/question/68330851)
 - 好多边界问题可以使用 Math.max Math.min 实现逻辑
+- mixin 的合理运用
