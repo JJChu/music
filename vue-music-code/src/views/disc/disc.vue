@@ -36,7 +36,7 @@ export default {
   methods: {
     _getSongList () {
       getSongList(this.disc.dissid).then(res => {
-        console.log(JSON.parse(res))
+        console.log(res)
         // if (res.code === ERR_OK) {
 
         // } else {
